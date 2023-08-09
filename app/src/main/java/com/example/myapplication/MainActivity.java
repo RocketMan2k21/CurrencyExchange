@@ -2,10 +2,13 @@ package com.example.myapplication;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -32,9 +35,14 @@ import java.lang.reflect.Array;
 public class MainActivity extends AppCompatActivity {
 
     private EditText myGiveText;
-    private EditText myGetText;
+    private TextView myGetText;
     private Spinner give_sp;
     private Spinner take_sp;
+
+    CurrencyModel[] currensies;
+
+    MyAdapter adapter;
+
 
     private RequestQueue requestQueue;
 
@@ -49,7 +57,6 @@ public class MainActivity extends AppCompatActivity {
 
         myGetText = findViewById(R.id.editTextTextPersonName3);
         myGiveText = findViewById(R.id.editTextTextPersonName);
-        myGetText.setEnabled(false);
         Button exchangeBtn = findViewById(R.id.button4);
 
         requestQueue = Volley.newRequestQueue(this);
@@ -58,16 +65,41 @@ public class MainActivity extends AppCompatActivity {
         give_sp = findViewById(R.id.spinner_give);
 
 
-        String[] currensies = {"UAH", "USD", "EUR", "PLN", "GBP"};
+        currensies =  new CurrencyModel[]{
+                new CurrencyModel("UAH", R.drawable.ukraine),
+                new CurrencyModel("USD", R.drawable.usa),
+                new CurrencyModel("EUR", R.drawable.european),
+                new CurrencyModel("GBP", R.drawable.uk),
+                new CurrencyModel("PLN", R.drawable.poland),
+        };
 
-        ArrayAdapter adapter = new ArrayAdapter(this,
-                android.R.layout.simple_spinner_item, currensies
+        CurrencyModel[] currencies1 = new CurrencyModel[]{
+                new CurrencyModel("USD", R.drawable.usa),
+                new CurrencyModel("UAH", R.drawable.ukraine),
+                new CurrencyModel("EUR", R.drawable.european),
+                new CurrencyModel("GBP", R.drawable.uk),
+                new CurrencyModel("PLN", R.drawable.poland),
+        };
+
+        adapter = new MyAdapter(this,
+                R.layout.custom_spinner,
+                currensies
                 );
 
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        MyAdapter adapter1 = new MyAdapter(this,
+                R.layout.custom_spinner,
+                currencies1
+        );
+
+
+        // adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+
 
         take_sp.setAdapter(adapter);
-        give_sp.setAdapter(adapter);
+        give_sp.setAdapter(adapter1);
+
+
 
         take_sp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -77,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-                take_cur = 1;
+
             }
         });
 
@@ -89,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-                give_cur = 2;
+
             }
         });
 
@@ -128,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
                     amount = "0";
                     myGiveText.setText(amount);
                 }
-                jsonParse(amount, currensies[give_cur], currensies[take_cur]);
+                jsonParse(amount, currencies1[give_cur].getCurrency(), currensies[take_cur].getCurrency());
             }
         });
 
