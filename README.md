@@ -1,5 +1,6 @@
 # Currency Exchange
 Roman Duda
+
 Easily and quickly exchange your currency
 
   * Used Volley for currency requests
